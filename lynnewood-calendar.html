@@ -1,0 +1,439 @@
+<title>Lynnewood Family Calendar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --paper:#F8F3E8; --surface:#FFFFFF; --surface-2:#FBF0CE; --ink:#241A12; --ink-soft:#6B5A48; --line:#E9DBBB;
+    --accent:#930000; --accent-strong:#690000; --accent-tint:#FBE7E4;
+    --gold:#B98A00; --gold-tint:#FBF0CE; --gold-solid:#EDCC00; --gold-ink:#241A12;
+    --c-noschool:#B3492E; --c-noschool-tint:#F7E4DD;
+    --c-dismissal:#B8791A; --c-dismissal-tint:#F6E8CC;
+    --c-spirit:#7A52B0; --c-spirit-tint:#EDE5F7;
+    --c-pride:#1F7A64; --c-pride-tint:#DFF0EA;
+    --c-event:#2E6FA0; --c-event-tint:#E1EEF6;
+    --c-testing:#5B6470; --c-testing-tint:#E7E9EB;
+    --c-school:#7A6144; --c-school-tint:#EFE8DD;
+    --shadow: 0 1px 2px rgba(24,36,32,0.06), 0 6px 20px -10px rgba(24,36,32,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#181310; --surface:#231C17; --surface-2:#2E2013; --ink:#F3E9DE; --ink-soft:#BBA894; --line:#3D2E20;
+      --accent:#E2685C; --accent-strong:#F0958C; --accent-tint:#3A211D;
+      --gold:#F0CE3D; --gold-tint:#3D330F; --gold-solid:#F0CE3D; --gold-ink:#241A12;
+      --c-noschool:#E2836A; --c-noschool-tint:#3A2018;
+      --c-dismissal:#E2AC4C; --c-dismissal-tint:#3A2C10;
+      --c-spirit:#B79AE0; --c-spirit-tint:#2C2440;
+      --c-pride:#5FC7AE; --c-pride-tint:#173832;
+      --c-event:#7FB6E2; --c-event-tint:#1B2E3E;
+      --c-testing:#A6AFB8; --c-testing-tint:#2A2E32;
+      --c-school:#C2A47D; --c-school-tint:#332A1C;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 20px -10px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#181310; --surface:#231C17; --surface-2:#2E2013; --ink:#F3E9DE; --ink-soft:#BBA894; --line:#3D2E20;
+    --accent:#E2685C; --accent-strong:#F0958C; --accent-tint:#3A211D;
+    --gold:#F0CE3D; --gold-tint:#3D330F; --gold-solid:#F0CE3D; --gold-ink:#241A12;
+    --c-noschool:#E2836A; --c-noschool-tint:#3A2018;
+    --c-dismissal:#E2AC4C; --c-dismissal-tint:#3A2C10;
+    --c-spirit:#B79AE0; --c-spirit-tint:#2C2440;
+    --c-pride:#5FC7AE; --c-pride-tint:#173832;
+    --c-event:#7FB6E2; --c-event-tint:#1B2E3E;
+    --c-testing:#A6AFB8; --c-testing-tint:#2A2E32;
+    --c-school:#C2A47D; --c-school-tint:#332A1C;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 20px -10px rgba(0,0,0,0.5);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+  }
+  a{color:var(--accent);}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 20px 64px;}
+
+  header.top{
+    display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px;
+    padding:24px 24px 22px; border-radius:18px; background:var(--surface-2);
+    border:1px solid var(--line); border-top:5px solid var(--accent); margin-bottom:18px;
+    box-shadow: inset 0 3px 0 var(--gold-solid);
+  }
+  .brand-eyebrow{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-soft); margin:0 0 6px;
+  }
+  h1{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight:700; font-size:clamp(26px,3.4vw,38px);
+    margin:0; text-wrap:balance; letter-spacing:-.01em;
+  }
+  .school-tag{color:var(--accent);}
+  .top-meta{font-size:13.5px; color:var(--ink-soft); margin-top:6px;}
+
+  nav.months{
+    display:flex; gap:6px; overflow-x:auto; padding:4px 24px 14px; margin:0 0 18px;
+    scrollbar-width:thin;
+  }
+  .month-btn{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:12.5px; font-weight:600; letter-spacing:.03em;
+    white-space:nowrap; padding:8px 14px; border-radius:999px; border:1px solid var(--line);
+    background:var(--surface); color:var(--ink-soft); cursor:pointer; transition:all .15s ease;
+  }
+  .month-btn:hover{border-color:var(--accent);}
+  .month-btn.active{background:var(--accent); color:var(--surface); border-color:var(--accent);}
+  .month-btn:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+
+  .layout{display:grid; grid-template-columns: 1fr 300px; gap:20px; align-items:start;}
+  @media (max-width:860px){ .layout{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    box-shadow:var(--shadow);
+  }
+
+  .cal-head{
+    display:flex; align-items:center; justify-content:space-between; padding:16px 20px 6px;
+  }
+  .cal-head h2{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight:600; font-size:21px; margin:0;}
+  .cal-arrows{display:flex; gap:6px;}
+  .arrow-btn{
+    width:32px; height:32px; border-radius:9px; border:1px solid var(--line); background:var(--surface);
+    color:var(--ink); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .arrow-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .arrow-btn:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+
+  .weekday-row{display:grid; grid-template-columns:repeat(7,1fr); padding:8px 12px 0;}
+  .weekday-row span{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-soft); text-align:center; padding-bottom:6px;
+  }
+  .grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px; padding:0 12px 16px;}
+  .cell{
+    height:106px; border:1px solid var(--line); border-radius:10px; padding:6px 6px 5px;
+    background:var(--surface); display:flex; flex-direction:column; gap:3px; cursor:default;
+    overflow:hidden; transition:border-color .15s ease, background .15s ease;
+  }
+  .cell.pad{background:transparent; border-color:transparent;}
+  .cell.has-events{cursor:pointer;}
+  .cell.has-events:hover{border-color:var(--accent);}
+  .cell.selected{border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-tint) inset;}
+  .cell .num{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-variant-numeric:tabular-nums; font-size:12.5px;
+    color:var(--ink-soft); font-weight:600;
+  }
+  .cell.today .num{
+    display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px;
+    background:var(--gold-solid); color:var(--gold-ink); border-radius:50%;
+  }
+  .pill{
+    font-size:10.8px; line-height:1.25; padding:2px 6px; border-radius:6px; font-weight:600;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;
+    transition:filter .1s ease;
+  }
+  .pill:hover, .pill:focus-visible{ filter:brightness(0.94); }
+  .pill.dim{opacity:.25;}
+  .more{
+    font-size:10px; color:var(--ink-soft); font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    padding-left:2px; cursor:pointer; width:fit-content;
+  }
+  .more:hover, .more:focus-visible{ color:var(--accent); text-decoration:underline; }
+  .pill:focus-visible, .more:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; border-radius:4px; }
+
+  .side{display:flex; flex-direction:column; gap:16px;}
+  .side .panel{padding:16px 18px;}
+  .side h3{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:15.5px; font-weight:600; margin:0 0 10px;
+    display:flex; align-items:center; gap:6px;
+  }
+
+  .legend{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{
+    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600;
+    padding:5px 10px 5px 8px; border-radius:999px; border:1px solid var(--line); background:var(--surface);
+    cursor:pointer; color:var(--ink); user-select:none; transition:all .12s ease;
+  }
+  .chip .dot{width:8px;height:8px;border-radius:50%;flex:none;}
+  .chip.off{opacity:.35;}
+  .chip:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+
+  .upcoming-list{display:flex; flex-direction:column; gap:10px;}
+  .up-item{display:flex; gap:10px; align-items:flex-start;}
+  .up-dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex:none;}
+  .up-body{flex:1; min-width:0;}
+  .up-title{font-size:13px; font-weight:700; margin:0 0 1px; text-wrap:balance;}
+  .up-when{font-size:11.5px; color:var(--ink-soft); font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+  .up-count{font-size:11px; color:var(--accent); font-weight:700; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+
+  #detailPanel{display:none; margin-bottom:18px; border-left:4px solid var(--accent);}
+  #detailPanel.is-open{display:block;}
+  .detail-panel{padding:16px 20px;}
+  .detail-panel h4{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; margin:0 0 10px;}
+  .detail-item{display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--line);}
+  .detail-item:last-child{border-bottom:none;}
+  .detail-bar{width:4px; border-radius:3px; flex:none;}
+  .detail-title{font-weight:700; font-size:14px; margin:0 0 2px;}
+  .detail-time{font-size:11.5px; color:var(--ink-soft); font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; margin-bottom:3px;}
+  .detail-desc{font-size:13px; color:var(--ink-soft); margin:0;}
+  .tag-info{
+    display:inline-block; font-size:10px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:5px; padding:1px 5px; margin-left:6px;
+  }
+
+  footer{
+    margin-top:22px; padding:16px 4px 0; font-size:12px; color:var(--ink-soft); border-top:1px solid var(--line);
+    display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px;
+  }
+
+  .empty-note{padding:14px 20px 18px; font-size:13px; color:var(--ink-soft);}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <p class="brand-eyebrow">2026 – 2027 · Lynnewood Elementary</p>
+      <h1>The <span class="school-tag">Casale</span> Family Calendar</h1>
+      <p class="top-meta">Every day off, dismissal, and event from the school calendar — for 1st &amp; 5th grade.</p>
+    </div>
+  </header>
+
+  <nav class="months" id="monthNav"></nav>
+
+  <div class="panel" id="detailPanel"></div>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="cal-head">
+        <h2 id="monthTitle">September 2026</h2>
+        <div class="cal-arrows">
+          <button class="arrow-btn" id="prevBtn" aria-label="Previous month">‹</button>
+          <button class="arrow-btn" id="nextBtn" aria-label="Next month">›</button>
+        </div>
+      </div>
+      <div class="weekday-row">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h3>Filter by type</h3>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="panel">
+        <h3>🔔 Coming up</h3>
+        <div class="upcoming-list" id="upcoming"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Source: Lynnewood Elementary 2026–27 Family Calendar (PDF)</span>
+    <span>🔔 = reminder set on Google Calendar (1 week + 1 day before) &nbsp;·&nbsp; ℹ️ = informational only</span>
+  </footer>
+
+</div>
+
+<script>
+const EVENTS = [{"s":"2026-09-01","e":"2026-09-01","a":true,"t":"First Day of School","d":"First day of the 2026-27 school year at Lynnewood Elementary.","c":"school","g":true},{"s":"2026-09-04","e":"2026-09-04","a":true,"t":"No School","d":"No school today.","c":"noschool","g":true},{"s":"2026-09-07","e":"2026-09-07","a":true,"t":"No School (Labor Day)","d":"No school - Labor Day.","c":"noschool","g":true},{"s":"2026-09-10","e":"2026-09-10","a":false,"t":"Back to School Night","d":"Two identical sessions at 6:30 PM and 7:15 PM.","c":"event","g":true,"st":"18:30","et":"19:45"},{"s":"2026-09-11","e":"2026-09-11","a":true,"t":"Red, White, and Blue Day","d":"Spirit day - wear red, white, and blue.","c":"spirit","g":true},{"s":"2026-09-18","e":"2026-09-18","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Positivity!\"","d":"PRIDE Day with a focus on Positivity.","c":"pride","g":true},{"s":"2026-09-18","e":"2026-09-18","a":false,"t":"Back to School Picnic","d":"On the PRIDE field, 5:30\u20137:00 PM.","c":"event","g":true,"st":"17:30","et":"19:00"},{"s":"2026-09-21","e":"2026-09-21","a":true,"t":"No School","d":"No school today.","c":"noschool","g":true},{"s":"2026-09-25","e":"2026-09-25","a":true,"t":"\"Go Gold for Childhood Cancer\"","d":"Spirit/awareness day.","c":"spirit","g":true},{"s":"2026-10-02","e":"2026-10-02","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Respect!\"","d":"PRIDE Day with Lions & Cubs, focus on Respect.","c":"pride","g":true},{"s":"2026-10-16","e":"2026-10-16","a":true,"t":"Fall Festival Family Night","d":"Rain date: 10/23.","c":"event","g":true},{"s":"2026-10-23","e":"2026-10-23","a":true,"t":"Picture Day","d":"School picture day.","c":"event","g":true},{"s":"2026-10-30","e":"2026-10-30","a":false,"t":"Halloween Parade & Early Dismissal (11:50 AM)","d":"Parade at 9:15 AM. Early Dismissal @ 11:50 AM (1st-5th grade). Only AM kindergarten (dismissal 11:25 AM); no school for PM K.","c":"dismissal","g":true,"st":"09:15","et":"11:50"},{"s":"2026-11-03","e":"2026-11-03","a":true,"t":"No School (Election Day)","d":"No school - Election Day.","c":"noschool","g":true},{"s":"2026-11-06","e":"2026-11-06","a":false,"t":"Veterans Day Celebration","d":"At Lynnewood, 9:15 AM.","c":"event","g":true,"st":"09:15","et":"10:15"},{"s":"2026-11-13","e":"2026-11-13","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Inclusivity!\"","d":"PRIDE Day with Lions & Cubs, focus on Inclusivity.","c":"pride","g":true},{"s":"2026-11-13","e":"2026-11-13","a":true,"t":"Family Night at the Book Fair","d":"Family night during Book Fair Week.","c":"event","g":true},{"s":"2026-11-16","e":"2026-11-20","a":true,"t":"American Education Week & Book Fair Week","d":"School-wide observance and book fair.","c":"school","g":true},{"s":"2026-11-20","e":"2026-11-20","a":true,"t":"Picture Retake Day","d":"Retake day for school pictures.","c":"event","g":true},{"s":"2026-11-20","e":"2026-11-20","a":true,"t":"Young Writers Day","d":"Young Writers Day.","c":"event","g":true},{"s":"2026-11-23","e":"2026-11-23","a":true,"t":"Early Dismissal Day (11:50 AM)","d":"Early Dismissal @ 11:50 AM (PM K-5th grades). Applies to both girls (1st & 5th grade).","c":"dismissal","g":true},{"s":"2026-11-24","e":"2026-11-24","a":true,"t":"Early Dismissal Day (11:50 AM)","d":"Early Dismissal @ 11:50 AM (1st-5th grades). Applies to both girls.","c":"dismissal","g":true},{"s":"2026-11-25","e":"2026-11-25","a":true,"t":"Early Dismissal Day (11:50 AM)","d":"Early Dismissal @ 11:50 AM (PM K-5th grades). Applies to both girls.","c":"dismissal","g":true},{"s":"2026-11-26","e":"2026-11-27","a":true,"t":"No School \u2013 Thanksgiving Break","d":"No school Nov 26-27 for Thanksgiving.","c":"noschool","g":true},{"s":"2026-12-01","e":"2026-12-01","a":true,"t":"\"Slippers Day\"","d":"Spirit day - May Day prizewinners' choice (Dylan & Shane Lindeman).","c":"spirit","g":true},{"s":"2026-12-04","e":"2026-12-04","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Determination!\"","d":"PRIDE Day with Lions & Cubs.","c":"pride","g":true},{"s":"2026-12-10","e":"2026-12-10","a":true,"t":"1st Trimester Report Cards Sent","d":"Sent electronically around 4:00 PM.","c":"school","g":true},{"s":"2026-12-23","e":"2026-12-23","a":true,"t":"Last Day of School Before Winter Break","d":"Last day before winter break.","c":"school","g":true},{"s":"2026-12-24","e":"2027-01-01","a":true,"t":"No School \u2013 Winter Break","d":"Winter break, Dec 24 - Jan 1.","c":"noschool","g":true},{"s":"2027-01-04","e":"2027-01-04","a":true,"t":"School Resumes","d":"School resumes after winter break.","c":"school","g":true},{"s":"2027-01-05","e":"2027-01-05","a":true,"t":"\"Favorite Character Day\"","d":"Dress as your favorite book/show/movie/video game character. May Day winner's choice: Harrison Fishel.","c":"spirit","g":true},{"s":"2027-01-08","e":"2027-01-08","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Empathy!\"","d":"PRIDE Day with Lions & Cubs.","c":"pride","g":true},{"s":"2027-01-11","e":"2027-01-11","a":false,"t":"Kindergarten Pre-Registration Opens (Online)","d":"For 27-28 incoming kindergarten students. (Not applicable to current 1st/5th graders - informational.)","c":"school","g":false,"st":"19:00","et":"19:30"},{"s":"2027-01-15","e":"2027-01-15","a":true,"t":"Early Dismissal Day (11:50 AM)","d":"Early Dismissal @ 11:50 AM (1st-5th grades). Applies to both girls.","c":"dismissal","g":true},{"s":"2027-01-18","e":"2027-01-18","a":true,"t":"No School \u2013 MLK Jr. Day & Day of Service","d":"No school - MLK Jr. Day and Day of Service at Lynnewood.","c":"noschool","g":true},{"s":"2027-01-29","e":"2027-01-29","a":false,"t":"Lynnewood Talent Show","d":"Evening, at HHS (Haverford High School).","c":"event","g":true,"st":"19:00","et":"20:30"},{"s":"2027-02-02","e":"2027-02-02","a":false,"t":"Family Heritage Day & Evening Celebration","d":"6:00\u20137:30 PM.","c":"event","g":true,"st":"18:00","et":"19:30"},{"s":"2027-02-05","e":"2027-02-05","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Positivity!\"","d":"PRIDE Day with Lions & Cubs.","c":"pride","g":true},{"s":"2027-02-12","e":"2027-02-12","a":true,"t":"Valentine's Day Parties","d":"In-class Valentine's Day parties.","c":"event","g":true},{"s":"2027-02-12","e":"2027-02-12","a":true,"t":"Early Dismissal Day (11:50 AM)","d":"Early Dismissal @ 11:50 AM (PM K-5th grades). Applies to both girls.","c":"dismissal","g":true},{"s":"2027-02-15","e":"2027-02-15","a":true,"t":"No School \u2013 Presidents' Day","d":"No school - Presidents' Day holiday.","c":"noschool","g":true},{"s":"2027-03-02","e":"2027-03-02","a":false,"t":"Read Across America Day & Literacy Night","d":"6:00\u20137:30 PM.","c":"event","g":true,"st":"18:00","et":"19:30"},{"s":"2027-03-03","e":"2027-03-03","a":true,"t":"Early Dismissal Day (11:50 AM)","d":"Early Dismissal @ 11:50 AM (1st-5th grades). Applies to both girls.","c":"dismissal","g":true},{"s":"2027-03-04","e":"2027-03-04","a":true,"t":"Early Dismissal Day (11:50 AM)","d":"Early Dismissal @ 11:50 AM (PM K-5th grades). Applies to both girls.","c":"dismissal","g":true},{"s":"2027-03-05","e":"2027-03-05","a":true,"t":"Early Dismissal Day (11:50 AM)","d":"Early Dismissal @ 11:50 AM (1st-5th grades). Applies to both girls.","c":"dismissal","g":true},{"s":"2027-03-05","e":"2027-03-05","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Respect!\"","d":"PRIDE Day with Lions & Cubs.","c":"pride","g":true},{"s":"2027-03-18","e":"2027-03-18","a":true,"t":"2nd Trimester Report Cards Sent","d":"Sent electronically around 4:00 PM.","c":"school","g":true},{"s":"2027-03-19","e":"2027-03-19","a":true,"t":"\"Rock Your Socks\"","d":"World Down Syndrome Day awareness.","c":"spirit","g":true},{"s":"2027-03-22","e":"2027-03-29","a":true,"t":"No School \u2013 Spring Break","d":"Spring break, March 22-29.","c":"noschool","g":true},{"s":"2027-03-30","e":"2027-03-30","a":true,"t":"Return to School After Spring Break","d":"School resumes after spring break.","c":"school","g":true},{"s":"2027-04-02","e":"2027-04-02","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Inclusivity!\"","d":"PRIDE Day.","c":"pride","g":true},{"s":"2027-04-06","e":"2027-04-06","a":false,"t":"Science Fair","d":"6:00\u20137:00 PM.","c":"event","g":true,"st":"18:00","et":"19:00"},{"s":"2027-04-21","e":"2027-04-21","a":false,"t":"5th Grade vs. Staff Basketball Game","d":"3:30 PM.","c":"event","g":true,"st":"15:30","et":"16:30"},{"s":"2027-04-22","e":"2027-04-22","a":true,"t":"Earth Day","d":"Earth Day observance.","c":"spirit","g":true},{"s":"2027-04-26","e":"2027-04-28","a":true,"t":"ELA PSSA Testing (Grades 3-5)","d":"Monday-Wednesday, 9:00\u201311:00 AM each day. Applies to 5th grader.","c":"testing","g":true},{"s":"2027-04-29","e":"2027-04-29","a":true,"t":"Poem In Your Pocket Day","d":"Spirit/literacy day.","c":"spirit","g":true},{"s":"2027-04-30","e":"2027-04-30","a":true,"t":"May Day Family Fun Celebration","d":"Rain date: 5/7.","c":"event","g":true},{"s":"2027-05-04","e":"2027-05-04","a":true,"t":"No School (Election Day)","d":"No school - Election Day (PA primary).","c":"noschool","g":true},{"s":"2027-05-05","e":"2027-05-05","a":true,"t":"National Bike to School Day","d":"Spirit/event day.","c":"spirit","g":true},{"s":"2027-05-05","e":"2027-05-06","a":true,"t":"Math PSSA Testing (Grades 3-5)","d":"Wednesday-Thursday, 9:00\u201311:00 AM. Applies to 5th grader.","c":"testing","g":true},{"s":"2027-05-07","e":"2027-05-07","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Determination!\"","d":"PRIDE Day with Lions & Cubs.","c":"pride","g":true},{"s":"2027-05-11","e":"2027-05-12","a":true,"t":"Science PSSA (Grade 5) & All Make-Ups (Grades 3-5)","d":"Tuesday-Wednesday, 9:00\u201311:00 AM. Applies to 5th grader.","c":"testing","g":true},{"s":"2027-05-17","e":"2027-05-17","a":false,"t":"Elementary Track Meet","d":"At HHS, 2:45 PM start. Rain date: 5/26.","c":"event","g":true,"st":"14:45","et":"16:00"},{"s":"2027-05-21","e":"2027-05-21","a":true,"t":"Lynnewood Field Day","d":"Rain date: 5/24.","c":"event","g":true},{"s":"2027-05-26","e":"2027-05-26","a":false,"t":"Lynnewood Art Show and Spring Concert","d":"6:00 PM.","c":"event","g":true,"st":"18:00","et":"19:30"},{"s":"2027-05-28","e":"2027-05-28","a":true,"t":"Early Dismissal Day (11:50 AM) & STEAM Day","d":"Early Dismissal @ 11:50 AM (PM K-5th grades). Applies to both girls.","c":"dismissal","g":true},{"s":"2027-05-31","e":"2027-05-31","a":true,"t":"No School \u2013 Memorial Day","d":"No school - Memorial Day.","c":"noschool","g":true},{"s":"2027-06-01","e":"2027-06-01","a":false,"t":"Instrumental Recital and Choral Concert","d":"For families of instrumental students, 9:00 AM in the gym.","c":"event","g":true,"st":"09:00","et":"10:00"},{"s":"2027-06-02","e":"2027-06-02","a":true,"t":"5th Grade Unity Day","d":"At Haverford Middle School. Rain date: 6/3. Applies to 5th grader.","c":"event","g":true},{"s":"2027-06-04","e":"2027-06-04","a":true,"t":"Lynnewood PRIDE Day \u2013 \"Empathy!\"","d":"PRIDE Day with Lions & Cubs.","c":"pride","g":true},{"s":"2027-06-10","e":"2027-06-10","a":true,"t":"Kindergarten \"Signing Day\"","d":"For new incoming kindergarten students. (Not applicable to current 1st/5th graders - informational.)","c":"school","g":false},{"s":"2027-06-10","e":"2027-06-10","a":true,"t":"Move Up Day!","d":"Students move up to visit next year's classroom.","c":"event","g":true},{"s":"2027-06-11","e":"2027-06-11","a":true,"t":"Kindergarten Celebrations","d":"10:15 AM and 2:15 PM sessions. (Not applicable to current 1st/5th graders - informational.)","c":"school","g":false},{"s":"2027-06-15","e":"2027-06-15","a":false,"t":"5th Grade Stepping Up Ceremony","d":"9:15 AM. Applies to 5th grader.","c":"event","g":true,"st":"09:15","et":"10:00"},{"s":"2027-06-15","e":"2027-06-15","a":true,"t":"Last Day for Kindergarten","d":"(Not applicable to current 1st/5th graders - informational.)","c":"school","g":false},{"s":"2027-06-16","e":"2027-06-16","a":true,"t":"Last Day of School (Grades 1st-5th)","d":"3rd Trimester report cards sent at 4:00 PM.","c":"school","g":true}];
+
+const CAT_LABEL = {
+  noschool:'No School', dismissal:'Early Dismissal', spirit:'Spirit Day',
+  pride:'PRIDE Day', event:'Event', testing:'Testing', school:'School Day'
+};
+const CAT_ORDER = ['noschool','dismissal','pride','spirit','event','testing','school'];
+
+const MONTHS = [
+  [2026,8],[2026,9],[2026,10],[2026,11],
+  [2027,0],[2027,1],[2027,2],[2027,3],[2027,4],[2027,5]
+];
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function pad(n){ return n<10 ? '0'+n : ''+n; }
+function isoDate(y,m,d){ return y+'-'+pad(m+1)+'-'+pad(d); }
+function parseISO(s){ const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function fmtTime(hhmm){
+  let [h,m] = hhmm.split(':').map(Number);
+  const ap = h>=12 ? 'PM':'AM'; let h12 = h%12; if(h12===0) h12=12;
+  return h12 + (m ? ':'+pad(m) : '') + ap.toLowerCase();
+}
+function fmtDateShort(d){
+  return MONTH_NAMES[d.getMonth()].slice(0,3)+' '+d.getDate();
+}
+function daysBetween(a,b){ return Math.round((b-a)/86400000); }
+function pillTooltip(e){
+  let when = 'All day';
+  if(!e.a && e.st) when = fmtTime(e.st) + (e.et ? '–'+fmtTime(e.et) : '');
+  else if(e.s !== e.e) when = fmtDateShort(parseISO(e.s))+'–'+fmtDateShort(parseISO(e.e));
+  return e.t + ' (' + when + ')' + (e.d ? ': ' + e.d : '');
+}
+
+const todayReal = new Date();
+todayReal.setHours(0,0,0,0);
+const schoolStart = parseISO('2026-09-01');
+const schoolEnd = parseISO('2027-06-16');
+const refDate = todayReal < schoolStart ? schoolStart : todayReal;
+
+let activeCats = new Set(CAT_ORDER);
+let selectedDateStr = null;
+
+function monthIndexForDate(d){
+  for(let i=0;i<MONTHS.length;i++){
+    if(MONTHS[i][0]===d.getFullYear() && MONTHS[i][1]===d.getMonth()) return i;
+  }
+  return 0;
+}
+let currentMonth = monthIndexForDate(refDate > schoolEnd ? schoolStart : refDate);
+
+function eventsOnDate(dateStr){
+  return EVENTS.filter(e => dateStr >= e.s && dateStr <= e.e);
+}
+
+function buildMonthNav(){
+  const nav = document.getElementById('monthNav');
+  nav.innerHTML = '';
+  MONTHS.forEach((m,i)=>{
+    const b = document.createElement('button');
+    b.className = 'month-btn' + (i===currentMonth ? ' active':'');
+    b.textContent = MONTH_NAMES[m[1]].slice(0,3) + " '" + (''+m[0]).slice(2);
+    b.addEventListener('click', ()=>{ currentMonth=i; selectedDateStr=null; render(); });
+    nav.appendChild(b);
+  });
+}
+
+function buildLegend(){
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  CAT_ORDER.forEach(cat=>{
+    const chip = document.createElement('button');
+    chip.className = 'chip' + (activeCats.has(cat) ? '' : ' off');
+    chip.innerHTML = '<span class="dot" style="background:var(--c-'+cat+')"></span>' + CAT_LABEL[cat];
+    chip.addEventListener('click', ()=>{
+      if(activeCats.has(cat)) activeCats.delete(cat); else activeCats.add(cat);
+      render();
+    });
+    legend.appendChild(chip);
+  });
+}
+
+function renderDetail(dateStr){
+  const panel = document.getElementById('detailPanel');
+  const evs = dateStr ? eventsOnDate(dateStr) : [];
+  if(!evs.length){ panel.innerHTML=''; panel.classList.remove('is-open'); return; }
+  panel.classList.add('is-open');
+  const d = parseISO(dateStr);
+  const header = d.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'});
+  let html = '<div class="detail-panel"><h4>'+header+'</h4>';
+  evs.forEach(e=>{
+    let time = 'All day';
+    if(!e.a && e.st) time = fmtTime(e.st) + (e.et ? '–'+fmtTime(e.et) : '');
+    else if(e.s !== e.e) time = fmtDateShort(parseISO(e.s))+' – '+fmtDateShort(parseISO(e.e));
+    const tag = e.g ? '<span class="tag-info">🔔 reminder set</span>' : '<span class="tag-info">ℹ️ info only</span>';
+    html += '<div class="detail-item"><div class="detail-bar" style="background:var(--c-'+e.c+')"></div>'
+      + '<div><p class="detail-title">'+e.t+tag+'</p>'
+      + '<p class="detail-time">'+time+'</p>'
+      + '<p class="detail-desc">'+e.d+'</p></div></div>';
+  });
+  html += '</div>';
+  panel.innerHTML = html;
+}
+
+function renderGrid(){
+  const [y,m] = MONTHS[currentMonth];
+  document.getElementById('monthTitle').textContent = MONTH_NAMES[m] + ' ' + y;
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const firstDow = new Date(y,m,1).getDay();
+  const numDays = new Date(y,m+1,0).getDate();
+  const todayStr = isoDate(todayReal.getFullYear(), todayReal.getMonth(), todayReal.getDate());
+
+  for(let i=0;i<firstDow;i++){
+    const pad_ = document.createElement('div'); pad_.className='cell pad'; grid.appendChild(pad_);
+  }
+  for(let day=1; day<=numDays; day++){
+    const dateStr = isoDate(y,m,day);
+    const evs = eventsOnDate(dateStr).filter(e=>activeCats.has(e.c));
+    const allEvsCount = eventsOnDate(dateStr).length;
+    const cell = document.createElement('div');
+    cell.className = 'cell' + (allEvsCount ? ' has-events':'') + (dateStr===todayStr ? ' today':'') + (dateStr===selectedDateStr ? ' selected':'');
+    const num = document.createElement('span'); num.className='num'; num.textContent = day;
+    cell.appendChild(num);
+    evs.slice(0,2).forEach(e=>{
+      const p = document.createElement('div');
+      p.className = 'pill';
+      p.style.background = 'var(--c-'+e.c+'-tint)';
+      p.style.color = 'var(--c-'+e.c+')';
+      const cont = e.s !== dateStr ? '⋯ ' : '';
+      p.textContent = cont + e.t;
+      p.title = pillTooltip(e);
+      p.tabIndex = 0;
+      cell.appendChild(p);
+    });
+    if(evs.length>2){
+      const hidden = evs.slice(2);
+      const more = document.createElement('span'); more.className='more'; more.textContent = '+'+hidden.length+' more';
+      more.title = hidden.map(pillTooltip).join('\n');
+      more.tabIndex = 0;
+      cell.appendChild(more);
+    }
+    if(allEvsCount){
+      cell.addEventListener('click', ()=>{
+        selectedDateStr = (selectedDateStr===dateStr) ? null : dateStr;
+        render();
+      });
+    }
+    grid.appendChild(cell);
+  }
+  renderDetail(selectedDateStr);
+}
+
+function renderUpcoming(){
+  const list = document.getElementById('upcoming');
+  const refStr = isoDate(refDate.getFullYear(), refDate.getMonth(), refDate.getDate());
+  const upcoming = EVENTS
+    .filter(e => e.s >= refStr && activeCats.has(e.c))
+    .sort((a,b)=> a.s.localeCompare(b.s))
+    .slice(0,6);
+
+  if(refDate > schoolEnd){
+    list.innerHTML = '<p class="up-when">🎉 School year complete!</p>';
+    return;
+  }
+  if(!upcoming.length){
+    list.innerHTML = '<p class="up-when">No matching events. Try enabling more filters above.</p>';
+    return;
+  }
+  list.innerHTML = '';
+  upcoming.forEach(e=>{
+    const d = parseISO(e.s);
+    const diff = daysBetween(refDate, d);
+    const countLabel = diff===0 ? 'Today' : diff===1 ? 'Tomorrow' : 'in '+diff+' days';
+    const item = document.createElement('div'); item.className='up-item';
+    item.innerHTML = '<span class="up-dot" style="background:var(--c-'+e.c+')"></span>'
+      + '<div class="up-body"><p class="up-title">'+e.t+'</p>'
+      + '<p class="up-when">'+d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' · <span class="up-count">'+countLabel+'</span></p></div>';
+    list.appendChild(item);
+  });
+}
+
+function render(){
+  buildMonthNav();
+  buildLegend();
+  renderGrid();
+  renderUpcoming();
+}
+
+document.getElementById('prevBtn').addEventListener('click', ()=>{
+  currentMonth = (currentMonth - 1 + MONTHS.length) % MONTHS.length; selectedDateStr=null; render();
+});
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  currentMonth = (currentMonth + 1) % MONTHS.length; selectedDateStr=null; render();
+});
+
+render();
+</script>
